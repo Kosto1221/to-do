@@ -23,12 +23,29 @@ import { useForm } from "react-hook-form";
 //   );
 // }
 
+interface IForm {
+  firstname: string;
+  lastname?: string;
+  email: string;
+  username: string;
+  password: string;
+  password1: string;
+}
+
 function ToDoList() {
-  const { register, handleSubmit, formState } = useForm();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<IForm>({
+    defaultValues: {
+      email: "@naver.com",
+    },
+  });
   const onValid = (data: any) => {
     console.log(data);
   };
-  console.log(formState.errors);
+  console.log(errors);
   return (
     <div>
       <form
@@ -36,13 +53,34 @@ function ToDoList() {
         onSubmit={handleSubmit(onValid)}
       >
         <input
-          {...register("username", { required: true, minLength: 10 })}
+          {...register("firstname", { required: "write here" })}
+          placeholder="firstname"
+        />
+        {<span>{errors?.username?.message}</span>}
+        <input {...register("lastname")} placeholder="lastname" />
+        {<span>{errors?.username?.message}</span>}
+        <input
+          {...register("email", {
+            required: "Email is required",
+            pattern: {
+              value: /^[A-Za-z0-9._%+-]+@naver.com$/,
+              message: "Only naver.com emails allowed",
+            },
+          })}
+          placeholder="email"
+        />
+        {/* {errors.email && <span>{errors.email.message as string}</span>} */}
+        {<span>{errors?.email?.message}</span>}
+        <input
+          {...register("username", { required: "write here", minLength: 10 })}
           placeholder="username"
         />
+        {<span>{errors?.username?.message}</span>}
         <input
-          {...register("password", { required: true, minLength: 5 })}
+          {...register("password", { required: "write here", minLength: 5 })}
           placeholder="password"
         />
+        {<span>{errors?.password?.message}</span>}
         <input
           {...register("password1", {
             required: "password is required",
@@ -50,6 +88,7 @@ function ToDoList() {
           })}
           placeholder="password1"
         />
+        {<span>{errors?.password1?.message}</span>}
         <button>Add</button>
       </form>
     </div>
